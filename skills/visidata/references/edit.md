@@ -1,0 +1,75 @@
+# | VisiData
+
+# Editing Contents
+
+## How to edit cells
+
+For a summary of all editing commands, see the [man page](https://www.visidata.org/man#edit).
+
+CommandOperation`e`edit contents of **current cell**`ge` _text_set contents of **current column for selected rows** to _text_`g*` _regex_/ _subst_replace matching _regex_ in **current column for selected rows** with _subst_`g=` _expr_evaluate Python _expr_ over each selected row and set **current column** to the result
+
+## Bulk corrections
+
+`ge` unifies inconsistent values for the same logical item (e.g. "visidata", "Visidata", "VisiData", "vd") across selected rows. The initial input seeds from the current cell.
+
+1. Select the rows with inconsistent values.
+2. Move the cursor to a row with the correct value; it need not be selected.
+3. Type `ge`, edit the value if needed, and press `Enter`.
+
+All selected cells in the current column take the corrected value.
+
+A Frequency Table ( `Shift+F`) makes the distinct values easy to see. Editing a key cell there propagates the correction back to the source sheet (see [note](#note) below).
+
+## note!
+
+Modifications made to rows on derived sheets will be reflected on the source sheets. This includes the Frequency Table: editing the key column there will change all instances on the source sheet, and if that sheet is derived from another source sheet, it will be reflected there, and so on.
+
+This does not apply to adding or deleting rows, only changes to existing rows.
+
+## Commands while editing
+
+While in editing mode, or anytime VisiData expects input (with e.g. `=`, `;`), typical readline commands become available:
+
+CommandOperation`Enter`accepts input`Ctrl+C`/ `Esc`aborts input`Ctrl+O`opens external $EDITOR to edit contents`Ctrl+R`reloads initial value`Ctrl+A`/ `Ctrl+E`moves to beginning/end of line`Backspace`deletes previous character`Up`/ `Down`sets contents to previous/next in history`Tab`/ `Shift-Tab`autocompletes input (when available)
+
+### Cell navigation while editing
+
+When editing a cell (with `e`), these additional commands move to an adjacent cell and continue editing:
+
+CommandOperation`Shift+Down`/\`Shift+Up\` saves and moves to cell below/above`Shift+Right`/\`Shift+Left\` saves and moves to cell right/left`Tab`/ `Shift-Tab`saves and moves to cell right/left
+
+`Tab` wraps to the next row when at the last column; `Shift-Tab` wraps to the previous row when at the first column.
+
+These bindings can be customized; see [Customize](customize.md#customizing-cell-editing-keybindings).
+
+* * *
+
+## How to rename columns
+
+CommandOperation`^`edits name of **current** column`g^`sets names of **all unnamed visible** columns to contents of **selected** rows (or **current** row)`z^`sets name of **current** column to contents of **current** cell`gz^`sets name of **current** column to combined contents of **current** column for **selected** rows
+
+In most cases, `^` is the preferred command. Examples which demo `^` can be seen in [Columns](columns.md#derived) and [Group](group.md#frequency).
+
+###### How to set the header in an Excel sheet?
+
+For most filetypes (e.g. csv, tsv, xls(x)) the loaders assume that the dataset's first `options.header` rows contain the column names.
+
+If the Excel file has multiple sheets with varying number of header rows:
+
+1. Pass `--header=0` while loading the file.
+
+```
+vd file.xlsx --header=0
+```
+
+1. For each sheet, press `s` or `t` to select the rows which represent the header rows.
+2. Press `g^` to set the names of the headers to the contents of selected rows.
+
+###### How to rename columns using the Columns sheet
+
+1. Press `Shift+C` to open the **Columns sheet**.
+2. Within the **name** column, move the cursor to the row which represents the source sheet.
+3. Type `e` and then input _the new column name_. Press `Enter`.
+4. Press `q` to return to the source sheet and see the renamed column.
+
+* * *

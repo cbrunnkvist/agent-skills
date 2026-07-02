@@ -1,0 +1,4 @@
+interface:
+  display_name: "VisiData"
+  short_description: "Explore and convert datasets in the terminal"
+  default_prompt: "Use $visidata to inspect, clean, convert, or profile this dataset with vd."
