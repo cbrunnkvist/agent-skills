@@ -3,7 +3,7 @@ name: mtgx
 description: Build, query, merge, validate, and manipulate Maltego MTGX investigation graphs. Use when working with mtgx or common typo mgtx files, Maltego, .mtgx archives, GraphML for Maltego, entity/link graph creation, OSINT graph workflows, Maltego archive validation, image embedding in Maltego entities, or converting JSON/NDJSON graph data into Maltego-native files.
 ---
 
-# MTGX
+# Maltego Graphs (.mtgx)
 
 ## Basic Investigative Graphing
 
