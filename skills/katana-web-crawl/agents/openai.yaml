@@ -1,0 +1,4 @@
+interface:
+  display_name: "Katana Web Crawl"
+  short_description: "Map authorized web app routes with Katana"
+  default_prompt: "Use $katana-web-crawl to crawl this authorized web target and return a scoped URL inventory."
