@@ -45,9 +45,62 @@ GRAPHML_NS = "http://graphml.graphdrawing.org/xmlns"
 VERSION_PROPERTIES = "maltego.graph.version=1.3\nmaltego.client.version=4.11\n"
 EXPECTED_MTGX_ENTRIES = {"version.properties", "Graphs/Graph1.graphml"}
 
+MAX_INPUT_SIZE_BYTES = 50 * 1024 * 1024
+MAX_ENTITY_COUNT = 100_000
+MAX_STRING_LENGTH = 10_000
+EMBED_ALLOWED_EXTENSIONS = {
+    ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".svg", ".ico", ".webp",
+}
+EMBED_MAX_SIZE_BYTES = 10 * 1024 * 1024
+
+_CONTROL_CHAR_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")
+
 
 def mtg_q(tag: str) -> str:
     return f"{{{MTG_NS}}}{tag}"
+
+
+def _sanitize_string(value: str, max_len: int = MAX_STRING_LENGTH) -> str:
+    cleaned = _CONTROL_CHAR_RE.sub("", value)
+    return cleaned[:max_len]
+
+
+def _safe_resolve(base_dir: str, relative_path: str) -> str:
+    if not base_dir:
+        raise ValueError(
+            "logo_dir must be set when providing relative image paths"
+        )
+    base = Path(base_dir).resolve()
+    target = (base / relative_path).resolve()
+    if not (target == base or str(target).startswith(str(base) + os.sep)):
+        raise ValueError(
+            f"Path traversal detected: '{relative_path}' resolves outside "
+            f"the logo directory"
+        )
+    return str(target)
+
+
+def _validate_image_path(path: str) -> None:
+    p = Path(path)
+    if not p.exists():
+        raise FileNotFoundError(f"Image file not found: {path}")
+    ext = p.suffix.lower()
+    if ext not in EMBED_ALLOWED_EXTENSIONS:
+        raise ValueError(
+            f"Unsupported image type '{ext}'; allowed: "
+            + ", ".join(sorted(EMBED_ALLOWED_EXTENSIONS))
+        )
+    size = p.stat().st_size
+    if size > EMBED_MAX_SIZE_BYTES:
+        raise ValueError(
+            f"Image too large ({size} bytes); max {EMBED_MAX_SIZE_BYTES}"
+        )
+
+
+def _assert_no_external_entities(xml_bytes: bytes) -> None:
+    head = xml_bytes[:4096].lower()
+    if b"<!doctype" in head or b"<!entity" in head:
+        raise ValueError("XML contains DTD/entity declarations; rejected")
 
 
 # ──────────────────────────────────────────────
@@ -324,7 +377,11 @@ class Graph:
 def read_mtgx(path: str) -> Graph:
     graph = Graph()
     with zipfile.ZipFile(path, "r") as zf:
+        info = zf.getinfo("Graphs/Graph1.graphml")
+        if info.file_size > MAX_INPUT_SIZE_BYTES:
+            raise ValueError("GraphML entry exceeds size limit")
         graphml_data = zf.read("Graphs/Graph1.graphml")
+    _assert_no_external_entities(graphml_data)
     root = ET.fromstring(graphml_data)
     graphml_root = root
     # Handle namespace
@@ -574,7 +631,15 @@ def write_graphml(graph: Graph, output_path: str):
 def read_json_spec(path: str) -> Graph:
     """Read a JSON or NDJSON graph specification."""
     graph = Graph()
-    text = sys.stdin.read() if path == "-" else Path(path).read_text()
+    if path == "-":
+        text = sys.stdin.read(MAX_INPUT_SIZE_BYTES + 1)
+        if len(text) > MAX_INPUT_SIZE_BYTES:
+            raise ValueError(f"Input exceeds {MAX_INPUT_SIZE_BYTES} byte limit")
+    else:
+        p = Path(path)
+        if p.stat().st_size > MAX_INPUT_SIZE_BYTES:
+            raise ValueError(f"Input file exceeds {MAX_INPUT_SIZE_BYTES} byte limit")
+        text = p.read_text()
     text = text.strip()
     if not text:
         raise ValueError("Input is empty; refusing to create an empty MTGX graph")
@@ -616,10 +681,10 @@ def _apply_json_spec(graph: Graph, data: dict):
         logo_dir = data.get("logo_dir", "")
         for eid, img_path in data["logos"].items():
             if eid in graph.entities:
-                full_path = os.path.join(logo_dir, img_path) if logo_dir else img_path
-                if os.path.exists(full_path):
-                    with open(full_path, "rb") as f:
-                        graph.entities[eid].image_b64 = base64.b64encode(f.read()).decode("ascii")
+                full_path = _safe_resolve(logo_dir, img_path)
+                _validate_image_path(full_path)
+                with open(full_path, "rb") as f:
+                    graph.entities[eid].image_b64 = base64.b64encode(f.read()).decode("ascii")
     # Single entity: {"id": ..., "type": ..., "value": ...}
     elif "type" in data and "value" in data and "entities" not in data:
         entity = _parse_entity_spec(data)
@@ -631,9 +696,9 @@ def _apply_json_spec(graph: Graph, data: dict):
 
 
 def _parse_entity_spec(spec: dict) -> Entity:
-    eid = spec.get("id", "")
-    etype = spec.get("type", "")
-    value = spec.get("value", "")
+    eid = _sanitize_string(spec.get("id", ""))
+    etype = _sanitize_string(spec.get("type", ""))
+    value = _sanitize_string(spec.get("value", ""))
     x = float(spec.get("x", 0))
     y = float(spec.get("y", 0))
     image_b64 = spec.get("image_b64", "")
@@ -642,14 +707,14 @@ def _parse_entity_spec(spec: dict) -> Entity:
     raw_props = spec.get("properties", {})
     if isinstance(raw_props, dict):
         for k, v in raw_props.items():
-            properties.append(Property(k, str(v), k))
+            properties.append(Property(_sanitize_string(k), _sanitize_string(str(v)), _sanitize_string(k)))
     elif isinstance(raw_props, list):
         for p in raw_props:
             if isinstance(p, dict):
                 properties.append(Property(
-                    p.get("name", ""),
-                    str(p.get("value", "")),
-                    p.get("display_name", p.get("name", ""))
+                    _sanitize_string(p.get("name", "")),
+                    _sanitize_string(str(p.get("value", ""))),
+                    _sanitize_string(p.get("display_name", p.get("name", "")))
                 ))
 
     return Entity(id=eid, type=etype, value=value,
@@ -657,11 +722,11 @@ def _parse_entity_spec(spec: dict) -> Entity:
 
 
 def _parse_link_spec(spec: dict) -> Link:
-    lid = spec.get("id", "")
-    src = spec.get("src", spec.get("source", ""))
-    dst = spec.get("dst", spec.get("target", ""))
-    label = spec.get("label", "")
-    desc = spec.get("description", spec.get("desc", ""))
+    lid = _sanitize_string(spec.get("id", ""))
+    src = _sanitize_string(spec.get("src", spec.get("source", "")))
+    dst = _sanitize_string(spec.get("dst", spec.get("target", "")))
+    label = _sanitize_string(spec.get("label", ""))
+    desc = _sanitize_string(spec.get("description", spec.get("desc", "")))
     unverified = spec.get("unverified", False)
 
     return Link(id=lid, source=src, target=dst, label=label,
@@ -938,6 +1003,12 @@ def cmd_embed(args):
 
     if args.id not in graph.entities:
         print(f"Error: Entity '{args.id}' not found", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        _validate_image_path(args.image)
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
 
     with open(args.image, "rb") as f:

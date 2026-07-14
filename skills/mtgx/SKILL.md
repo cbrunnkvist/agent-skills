@@ -55,3 +55,12 @@ Do not install packages, create virtual environments, or debug `uvx` for this sk
 - Do not pack `Icons/`, `Entities/`, `Graphs/Graph1.properties`, `META-INF/MANIFEST.MF`, source articles, project logos, or generated investigation files into reusable skills.
 - Mark uncertain claims in labels with `[UNVERIFIED]` and use red dashed links when representing them.
 - Prefer Maltego standard property names such as `person.fullname`, `organization.name`, `title`, `location.name`, `date`, `url`, and `description`.
+
+## Security Boundary
+
+- **Path traversal**: All file-path inputs (`logo_dir`, `img_path`, `image`) are resolved and validated to remain within the intended directory before reading.
+- **File-type restriction**: The `embed` command and logo embedding only accept image files with known extensions (png, jpg, jpeg, gif, bmp, svg, ico, webp).
+- **Size limits**: Input data is capped at 50 MB; individual images at 10 MB; entity count at 100 000; string values at 10 000 characters.
+- **Input sanitization**: Control characters are stripped from all string values before they enter the graph model.
+- **XML safety**: External entity and DTD declarations are rejected before parsing.
+- **No unbounded reads**: All file and stdin reads are bounded by size limits.
