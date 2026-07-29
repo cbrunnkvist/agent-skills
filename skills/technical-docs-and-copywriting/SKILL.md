@@ -42,7 +42,7 @@ Use these presets. An explicit ratio overrides a preset.
 | 20:80 | Landing page, announcement | Lead with positioning; anchor every claim in real capability |
 | 0:100 | Copywriting | Maximize messaging while retaining factual constraints |
 
-If no dial is supplied, use 80:20 for a README. Use 100:0 for API references, error guides, and runbooks. For another deliverable, infer the least promotional safe ratio and state it in the final summary.
+If no dial is supplied, use 80:20 for a README. Use 100:0 for API references, error guides, and runbooks. For another deliverable, infer the least promotional safe ratio and use it for internal editing decisions.
 
 ## 2. Draft in Separate Layers
 
@@ -68,14 +68,18 @@ Run this audit before the final pass:
 - Check every code snippet for imports, setup, inputs, expected output, and safe placeholders. Do not call an example runnable unless it is complete enough to run in its stated environment.
 - Retain or add `[Validate: ...]` markers for every unsupported high-consequence claim.
 
-## 4. Executive Balancing and Final Output
+## 4. Executive Balancing and Output Boundary
 
 This phase is mandatory, even for 100:0 and 0:100 work.
 
 1. Confirm that technical facts survived unchanged and that no marketing language upgrades an unverified claim.
 2. Compare section emphasis, headings, evidence, code/detail density, and CTA density to the requested dial.
 3. Adjust ordering, transitions, and section prominence. Do not merge Engine A and B rules into a middle-ground voice.
-4. Return the requested document and this callout:
+4. Return only the requested document by default. The balance check is internal process metadata, not part of the document being drafted or edited. Do not append an `Executive Balance Summary`, editorial notes, intake fields, validation report, or other skill-generated content to the subject document.
+
+If the user explicitly asks for an editorial report, provide it separately after the document under a clearly labeled heading. Never place that report inside the subject document or silently modify the document to include it.
+
+When an editorial report is explicitly requested, use this optional format:
 
 > **Executive Balance Summary**
 > - **Applied dial:** `Tech:Marketing`
