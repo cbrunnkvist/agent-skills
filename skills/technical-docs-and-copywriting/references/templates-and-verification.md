@@ -14,7 +14,7 @@ Constraints, risks, or prohibited claims:
 
 ## Optional Editorial Report Template
 
-Use this only when the user explicitly requests an editorial report. Keep it outside the requested document. Never append it to a document being drafted or edited by default.
+Use this only when the user explicitly requests an editorial report. For a report-only audit, return it without reproducing the source document. If the user requests both outputs, keep the report outside and after the requested document. Never append it to a document being drafted or edited by default.
 
 ```markdown
 > **Executive Balance Summary**

@@ -77,7 +77,7 @@ This phase is mandatory, even for 100:0 and 0:100 work.
 3. Adjust ordering, transitions, and section prominence. Do not merge Engine A and B rules into a middle-ground voice.
 4. Return only the requested document by default. The balance check is internal process metadata, not part of the document being drafted or edited. Do not append an `Executive Balance Summary`, editorial notes, intake fields, validation report, or other skill-generated content to the subject document.
 
-If the user explicitly asks for an editorial report, provide it separately after the document under a clearly labeled heading. Never place that report inside the subject document or silently modify the document to include it.
+Match the response to the requested deliverables. If the user asks only for an audit or editorial report, return the report alone without reproducing the source document. If the user asks for both a document and an editorial report, place the report after the document under a clearly labeled heading. Never place that report inside the subject document or silently modify the document to include it.
 
 When an editorial report is explicitly requested, use this optional format:
 
