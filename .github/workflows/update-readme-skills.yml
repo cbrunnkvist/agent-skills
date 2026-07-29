@@ -1,0 +1,48 @@
+name: Update README skills
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "skills/**/SKILL.md"
+      - "scripts/update_readme_skills.py"
+      - "README.md"
+      - ".github/workflows/update-readme-skills.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-readme-skills
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Sync latest main
+        run: git pull --ff-only origin main
+
+      - name: Generate skill list
+        run: python3 scripts/update_readme_skills.py
+
+      - name: Commit updated README
+        run: |
+          if git diff --quiet -- README.md; then
+            echo "README skill list is already current."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Update README skill list"
+          git push origin HEAD:main
