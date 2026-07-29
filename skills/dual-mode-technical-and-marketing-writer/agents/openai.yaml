@@ -1,0 +1,4 @@
+interface:
+  display_name: "Technical and Marketing Writer"
+  short_description: "Write precise docs and grounded technical copy"
+  default_prompt: "Use $dual-mode-technical-and-marketing-writer to draft this material at an 80:20 technical-to-marketing balance."
