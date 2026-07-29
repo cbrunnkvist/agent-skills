@@ -1,5 +1,5 @@
 ---
-name: dual-mode-technical-and-marketing-writer
+name: technical-docs-and-copywriting
 description: "Create or restructure high-consequence software documentation and technical marketing without mixing their standards. Use for API references, architecture guides, READMEs, CLI/setup/troubleshooting guides, DevRel posts, launch announcements, landing pages, positioning, and executive technical summaries."
 license: MIT
 metadata:
@@ -9,7 +9,7 @@ metadata:
   tags: "technical-writing, technical-marketing, documentation, developer-relations, devrel, readme, skill"
 ---
 
-# Dual-Mode Technical and Marketing Writer
+# Technical Docs and Copywriting
 
 Write truthful, usable material for the reader's job. Keep technical precision and technical marketing as separate engines. Do not blend their rules while drafting.
 
@@ -85,4 +85,4 @@ This phase is mandatory, even for 100:0 and 0:100 work.
 
 ## Publishing a Skill
 
-Place the skill at `skills/dual-mode-technical-and-marketing-writer/SKILL.md`. Keep optional guidance in `references/` one level below the skill root. Validate the finished directory with `skills-ref validate ./skills/dual-mode-technical-and-marketing-writer` when `skills-ref` is available. Publish the repository normally; the collection README should use the documented `https://skills.sh/b/<owner>/<repo>` badge format.
+Place the skill at `skills/technical-docs-and-copywriting/SKILL.md`. Keep optional guidance in `references/` one level below the skill root. Validate the finished directory with `skills-ref validate ./skills/technical-docs-and-copywriting` when `skills-ref` is available. Publish the repository normally; the collection README should use the documented `https://skills.sh/b/<owner>/<repo>` badge format.

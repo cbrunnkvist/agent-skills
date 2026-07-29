@@ -1,0 +1,4 @@
+interface:
+  display_name: "Technical Docs and Copywriting"
+  short_description: "Write precise docs and grounded technical copy"
+  default_prompt: "Use $technical-docs-and-copywriting to draft this material at an 80:20 technical-to-marketing balance."
