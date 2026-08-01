@@ -1,0 +1,4 @@
+interface:
+  display_name: "Identity Trace"
+  short_description: "Trace identifiers across public OSINT sources"
+  default_prompt: "Use $identity-trace to collect and normalize public traces for this identifier into a private evidence bundle."

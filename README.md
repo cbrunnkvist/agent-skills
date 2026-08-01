@@ -5,6 +5,7 @@ Personal collection of misc skills built along the way.
 <!-- skills:start -->
 | Skill | Description | Install |
 | --- | --- | --- |
+| [identity-trace](skills/identity-trace/) | Collect, normalize, and preserve public OSINT traces for email addresses, phone numbers, usernames, full names, and birth dates. Use for requests such as "run… | `npx skills add https://github.com/cbrunnkvist/agent-skills --skill identity-trace` |
 | [katana-web-crawl](skills/katana-web-crawl/) | Authorized ProjectDiscovery Katana crawling for owned apps, approved pentest or bug-bounty targets, and CTF labs. Use to inventory URLs, endpoints, JavaScript… | `npx skills add https://github.com/cbrunnkvist/agent-skills --skill katana-web-crawl` |
 | [mtgx](skills/mtgx/) | Build, query, merge, validate, and manipulate Maltego MTGX investigation graphs. Use when working with mtgx or common typo mgtx files, Maltego, .mtgx archives,… | `npx skills add https://github.com/cbrunnkvist/agent-skills --skill mtgx` |
 | [portainer-api](skills/portainer-api/) | How to drive the Portainer REST API correctly from curl or any plain-HTTP client using an API token — authentication with X-API-Key, the undocumented Docker/Ku… | `npx skills add https://github.com/cbrunnkvist/agent-skills --skill portainer-api` |
