@@ -1,17 +1,23 @@
 ---
 name: identity-trace
-description: Collect, normalize, and preserve public OSINT traces for email addresses, phone numbers, usernames, full names, and birth dates. Use for requests such as "run an identity trace," investigate a unique identifier, find candidate public profiles, check public account-registration or breach traces, prepare web-search pivots, or produce a machine-readable evidence bundle for an agent workflow.
+description: Use this skill to collect, normalize, and preserve public OSINT traces for email addresses, phone numbers, usernames, full names, and birth dates. Use it when a user asks to "run an identity trace," investigate a unique identifier, find candidate public profiles, check public account-registration or breach traces, prepare web-search pivots, or produce a machine-readable evidence bundle.
 ---
 
 # Identity Trace
 
-Use the bundled standard-library CLI as the deterministic collection and reporting layer:
+Use the bundled standard-library CLI as the deterministic collection and reporting layer. From the skill directory, run:
 
 ```bash
-python3 <skill>/scripts/identity_trace.py run <identifier>
+python3 scripts/identity_trace.py run "user@example.com"
 ```
 
 Do not install tools automatically. Let the CLI detect optional local tools and credentials, run every applicable available source by default, and record unavailable or failed sources in the case bundle.
+
+## Quickstart and Credentials
+
+Run `doctor --json`, then run the CLI. This best-effort path needs no API keys: it uses available local tools and skips unavailable sources.
+
+Ask about `HIBP_API_KEY` only when the user explicitly wants HIBP breach data and `doctor` reports it absent. Ask: “HIBP is optional. To include breach data, set `HIBP_API_KEY` in the active environment or provide it for this session; it will be used only for this invocation and never written to a case bundle or `.env` file.” Do not put an API key in CLI arguments or persist it. GitHub authentication is also optional and is handled by an existing `gh` login or `GH_TOKEN`.
 
 ## Workflow
 

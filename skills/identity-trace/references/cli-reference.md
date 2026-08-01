@@ -36,7 +36,7 @@ Email normalization trims whitespace and lowercases the value. Phone normalizati
 
 The default source set is every applicable source. `--sources` limits the set and `--exclude` removes sources after selection. Unknown source names are usage errors.
 
-The GitHub adapter honors the authentication environment already supported by `gh`, including `GH_TOKEN`, but never records token values. HIBP uses `HIBP_API_KEY`. HTTP requests use `identity-trace-agent-skill` as the user agent.
+The GitHub adapter honors the authentication environment already supported by `gh`, including `GH_TOKEN`, but never records token values. HIBP is optional and uses `HIBP_API_KEY` from the active process environment; the CLI does not read `.env` files or accept API keys as command-line arguments. If a user supplies an HIBP key in chat for one run, pass it only through the host's per-process secret/environment mechanism and do not persist it. HTTP requests use `identity-trace-agent-skill` as the user agent.
 
 ## Outputs and Exit Codes
 
